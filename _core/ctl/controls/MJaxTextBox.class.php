@@ -118,8 +118,8 @@ class MJaxTextBox extends MJaxControl{
     public function GetValue(){
         return $this->strText;
     }
-    public function __toArray(){
-        $arrData = parent::__toArray();
+    public function __MSerialize(){
+        $arrData = parent::__MSerialize();
         $arrData['Href'] = '#';//TODO: Remove tmp hack
         return $arrData;
     }

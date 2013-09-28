@@ -2,7 +2,7 @@
 /* 
  * This control will have be the base for all MJax controls
  */
-abstract class MJaxControlBase{
+abstract class MJaxControlBase extends MLCObjectBase{
 	protected static $arrExtensions = array();
     protected $strControlId = null;
     protected $arrEvents = array();
@@ -23,59 +23,46 @@ abstract class MJaxControlBase{
         if(is_null($objParentControl)){
         	throw new Exception("This is a null parent control");
         }
+
        $this->blnModified = true;
-		
-        if($objParentControl instanceof MJaxForm){
-            $this->objForm = $objParentControl;  
-			if(!is_null($strControlId)){
-	            $this->strControlId = $strControlId;
-	        }else{
-	            $this->strControlId = $this->objForm->GenerateControlId();
-	        }
-			          
+        if($objParentControl instanceof MData){
+            $this->__MUnserialize($objParentControl);
         }else{
-            $this->objParentControl = $objParentControl;
-            $this->objForm = $this->objParentControl->Form;
-			
-			if(!is_null($strControlId)){
-	            $this->strControlId = $strControlId;
-	        }else{
-	        	if(
-	        		(!is_null($arrAttrs)) &&
-	        		(array_key_exists('id', $arrAttrs))
-				){
-					$this->strControlId = $arrAttrs['id'];					
-				}else{
-	            	$this->strControlId = $this->objForm->GenerateControlId();
-				}
-	        }
-			
-            $this->objParentControl->AddChildControl($this);
+            if($objParentControl instanceof MJaxForm){
+                $this->objForm = $objParentControl;
+                if(!is_null($strControlId)){
+                    $this->strControlId = $strControlId;
+                }else{
+                    $this->strControlId = $this->objForm->GenerateControlId();
+                }
+
+            }else{
+                $this->objParentControl = $objParentControl;
+                $this->objForm = $this->objParentControl->Form;
+
+                if(!is_null($strControlId)){
+                    $this->strControlId = $strControlId;
+                }else{
+                    if(
+                        (!is_null($arrAttrs)) &&
+                        (array_key_exists('id', $arrAttrs))
+                    ){
+                        $this->strControlId = $arrAttrs['id'];
+                    }else{
+                        $this->strControlId = $this->objForm->GenerateControlId();
+                    }
+                }
+
+                $this->objParentControl->AddChildControl($this);
+            }
+
+
+            $this->objForm->RegisterControl($this);
+
         }
-    	
-
-        $this->objForm->RegisterControl($this);
-
-        //$this->Create_Controls();
-        if(!is_null($arrAttrs)){
-        	if(array_key_exists('id', $arrAttrs)){
-        		unset($arrAttrs['id']);
-        	}
-			if(array_key_exists('type', $arrAttrs)){
-        		unset($arrAttrs['type']);
-        	}
-			if(array_key_exists('class', $arrAttrs)){
-        		unset($arrAttrs['class']);
-        	}
-			if(array_key_exists('name', $arrAttrs)){
-        		unset($arrAttrs['name']);
-        	}
-        	$this->arrAttr = $arrAttrs;
-		}
-		
-		foreach(self::$arrExtensions as $objExtension){
-			$objExtension->InitControl($this);
-		}
+        foreach(self::$arrExtensions as $objExtension){
+            $objExtension->InitControl($this);
+        }
     }
 
     public function SetForm($objForm) {
@@ -279,19 +266,19 @@ abstract class MJaxControlBase{
             $mixHtml
         );
     }
-    public function __toArray(){
-        $arrData = array();
+    public function __MSerialize(){
+        $arrData = parent::__MSerialize();
         $arrData['ControlId'] = $this->strControlId;
         $arrData['Text'] = $this->strText;
         $arrData['Name'] = $this->strName;
         $arrData['Template'] = $this->strTemplate;
         $arrData['Modified'] = $this->blnModified;
-        $arrData['Type'] = get_class($this);
+
         $arrData['Events'] = array();
         foreach($this->arrEvents as $strKey => $arrEvents){
             $arrData['Events'][$strKey] = array();
             foreach($arrEvents as $intIndex => $objEvent){
-                $arrData['Events'][$strKey][$intIndex] = $objEvent->__toArray();
+                $arrData['Events'][$strKey][$intIndex] = $objEvent->_MSerialize();
             }
         }
         if(file_exists($this->strTemplate)){
@@ -300,6 +287,25 @@ abstract class MJaxControlBase{
         //TODO: Consider attaching to entity
 
         return $arrData;
+    }
+    public function __MUnserialize($arrData){
+        $this->strControlId = $arrData['ControlId'];
+        $this->strText = $arrData['Text'];
+        $this->strName = $arrData['Name'];
+        $this->strTemplate = $arrData['Template'];
+        $this->blnModified = $arrData['Modified'];
+
+        if(array_key_exists('Events', $arrData)){
+            foreach($arrData['Events'] as $strKey => $arrEvents){
+                $this->arrEvents[$strKey] = array();
+                foreach($arrEvents as $intIndex => $objEvent){
+                    $arrData['Events'][$strKey][$intIndex];
+                }
+            }
+        }
+        /*if(file_exists($this->strTemplate)){
+            $arrData['TemplateHtml'] = file_get_contents($this->strTemplate);
+        }*/
     }
 	public static function AddExtension($objExtension){
 		self::$arrExtensions[] = $objExtension;

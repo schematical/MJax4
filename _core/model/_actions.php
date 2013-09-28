@@ -9,7 +9,7 @@ abstract class MJaxBaseAction{
     public function SetEvent($objEvent){
         $this->objEvent = $objEvent;
     }
-    public function __toArray(){
+    public function _MSerialize(){
         $arrData = array();
         $arrData['Type'] = get_class($this);
         return $arrData;
@@ -60,8 +60,8 @@ class MJaxServerControlAction extends MJaxBaseAction{
 
         }
     }
-    public function __toArray(){
-        $arrData = parent::__toArray();
+    public function _MSerialize(){
+        $arrData = parent::_MSerialize();
         $arrData['TargetControlId'] = $this->strTargetControlId;
         $arrData['Function'] = $this->strFunction;
         $arrData['UseForm'] = $this->blnUseForm;

@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-class MJaxFormBase {
+class MJaxFormBase extends MLCObjectBase{
     protected $arrData = array();
     protected $arrControls = array();
     protected $intNextControlId = 1;
@@ -50,7 +50,8 @@ class MJaxFormBase {
     }
     public static function Run($strFormClass){
         if(array_key_exists('action', $_POST)){
-
+            $objForm = _munserialzie($_POST);
+            _dv($objForm);
         }else{
             $objForm = new $strFormClass();
             $objForm->Form_Create();
@@ -158,10 +159,19 @@ class MJaxFormBase {
     }
     public function Render(){
 
-        $this->arrData['body'] = marray($this->arrControls);
+
 
         //If this is html do something here
         require_once(__MJAX_CORE_VIEW__ . '/MJaxForm.tpl.php');
+    }
+    public function __MSerialize(){
+        $arrData = parent::__MSerialize();
+        $this->arrData['body'] = $this->arrControls;
+        $arrData = array_merge($arrData, _mserialzie($this->arrData));
+        return $arrData;
+    }
+    public function __MUnserialize($arrData){
+        $this->arrData = _munserialzie($arrData);
     }
 
 }

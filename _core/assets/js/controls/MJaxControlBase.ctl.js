@@ -24,7 +24,7 @@ MJaxControlBase.prototype.type = 'MJaxControlBase';
 MJaxControlBase.prototype.Render = function(strText, strRender){
     if(this.jEle == null){
         //Create a new Ele
-        var strHtml = window.Mustache.render(MJax.FormData.head.controls_tpls[this.Type], this);
+        var strHtml = window.Mustache.render(MJax.FormData.head.controls_tpls[this._mclass], this);
 
         return strHtml;
     }else{

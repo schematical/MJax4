@@ -12,11 +12,12 @@
                 if(objEvent.type == 'keypress'){
                     objData.keyCode = objEvent.keyCode;
                 }
+                MJax.FormData.head.event = objData;//Consider makng this an array that can be pushed and popped
                 for(var strControlId in MJax.Controls){
-                    objData[strControlId] = MJax.Serialize(MJax.Controls[strControlId]);
+                    MJax.FormData.body[strControlId] = MJax.Serialize(MJax.Controls[strControlId]);
                 }
 
-                MJax.Connections['ajax'].TriggerEvent(objData);
+                MJax.Connections['ajax'].TriggerEvent(MJax.FormData);
             }
         },
         Connections:{},
@@ -61,12 +62,7 @@
             );
         },
         Run:function(){
-            for(var strId in MJax.FormData.body){
-                var objControl = MJax.FormData.body[strId];
-                var funCtl = MJax.ControlDefinitions[objControl.Type];
-                MJax.Controls[objControl.ControlId] = new funCtl(objControl);
-
-            }
+            MJax.FormData = MJax.Unserialize(MJax.FormData);
             MJax.Render();
             for(var strId in MJax.Controls){
                 MJax.Controls[strId].Attach();
@@ -92,10 +88,13 @@
             if(mixData == null){
                 return null;
             }
+            if(mixData instanceof jQuery){
+                return undefined;
+            }
             var strJType = typeof(mixData);
             if(strJType == 'object'){
-                if(typeof(mixData['MSerialize']) != 'undefined'){
-                    return mixData.MSerialize();
+                if(typeof(mixData['_MSerialize']) != 'undefined'){
+                    return mixData._MSerialize();
                 }
                 var objReturn = {};
                 for(var strKey in mixData){
@@ -123,9 +122,32 @@
             }
             return objReturn;
         },
+        Unserialize:function(objData){
+
+            if(typeof mixData == 'object'){
+                if(typeof(mixData._mclass != 'undefined')){
+                    var funCtl = MJax.ControlDefinitions[mixData._mclass];
+                    if(typeof(funCtl) != 'undefined'){
+                        var objReturn = new funCtl(mixData);
+                    }else{
+                        MJax.log("Missing Javascript MClass Definition: "+ mixData._mclass);
+                    }
+
+                }else{
+                    var objReturn = {};
+                    for(var strId in mixData){
+                        objReturn[strId] = MJax.Unserialize(mixData[strId]);
+                    }
+                }
+            }else{
+                objReturn = mixData;
+            }
+            return objReturn;
+        },
         TriggerEvent:function(objEvent){
 
         }
 
     };
 })(window);
+MJax.Init(MJax_Data);

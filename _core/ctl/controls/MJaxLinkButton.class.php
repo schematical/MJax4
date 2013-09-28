@@ -39,8 +39,8 @@ class MJaxLinkButton extends MJaxControl{
     public function GetValue(){
         return null;
     }
-    public function __toArray(){
-        $arrData = parent::__toArray();
+    public function __MSerialize(){
+        $arrData = parent::__MSerialize();
         return $arrData;
     }
 

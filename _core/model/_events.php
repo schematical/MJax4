@@ -74,7 +74,7 @@ class MJaxEventBase{
 
         }
     }
-    public function __toArray(){
+    public function _MSerialize(){
         $arrData = array();
         $arrData['Type'] = get_class($this);
         $arrData['Rendered'] =  $this->blnRendered;
@@ -82,7 +82,7 @@ class MJaxEventBase{
         //$arrData['Control'] =  $this->objControl;
         $arrData['ControlId'] =  $this->objControl->ControlId;
         $arrData['Selector'] =  $this->strSelector;
-        $arrData['Action'] =  $this->objAction->__toArray();
+        $arrData['Action'] =  $this->objAction->_MSerialize();
         $arrData['EventName'] = $this->strEventName;
         return $arrData;
     }
