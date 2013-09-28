@@ -166,6 +166,7 @@ class MJaxFormBase extends MLCObjectBase{
     }
     public function __MSerialize(){
         $arrData = parent::__MSerialize();
+        $this->arrData['_mclass'] = 'MJaxForm';
         $this->arrData['body'] = $this->arrControls;
         $arrData = array_merge($arrData, _mserialzie($this->arrData));
         return $arrData;

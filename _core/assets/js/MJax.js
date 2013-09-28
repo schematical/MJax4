@@ -70,9 +70,11 @@
         },
         Render:function(){
             MJax.LoadTemplate();
+            var objRenderData = MJax.FormData.body;
+            objRenderData['_head'] = MJax.FormData.head;
             var strBody = window.Mustache.render(
                 MJax.FormData.head.template_html,
-                this
+                objRenderData
             );
             $('body').html(
                 strBody
@@ -122,15 +124,16 @@
             }
             return objReturn;
         },
-        Unserialize:function(objData){
+        Unserialize:function(mixData){
 
             if(typeof mixData == 'object'){
                 if(typeof(mixData._mclass != 'undefined')){
+                    MJax.Log("Unserializing: " + mixData._mclass);
                     var funCtl = MJax.ControlDefinitions[mixData._mclass];
                     if(typeof(funCtl) != 'undefined'){
                         var objReturn = new funCtl(mixData);
                     }else{
-                        MJax.log("Missing Javascript MClass Definition: "+ mixData._mclass);
+                        MJax.Log("Missing Javascript MClass Definition: "+ mixData._mclass);
                     }
 
                 }else{
@@ -146,6 +149,10 @@
         },
         TriggerEvent:function(objEvent){
 
+        },
+        Log:function(mixLog){
+            //TODO: Write this
+            console.log(mixLog);
         }
 
     };
