@@ -13,16 +13,16 @@
                     objData.keyCode = objEvent.keyCode;
                 }
                 MJax.FormData.head.event = objData;//Consider makng this an array that can be pushed and popped
-                for(var strControlId in MJax.Controls){
-                    MJax.FormData.body[strControlId] = MJax.Serialize(MJax.Controls[strControlId]);
-                }
 
-                MJax.Connections['ajax'].TriggerEvent(MJax.FormData);
+                var objFormData = MJax.Serialize(MJax.FormData);
+
+
+                MJax.Connections['ajax'].TriggerEvent(objFormData);
             }
         },
         Connections:{},
         ControlDefinitions:{},
-        Controls:{},
+
         Init:function(objFormData){
             MJax.FormData = objFormData;
 
@@ -64,13 +64,16 @@
         Run:function(){
             MJax.FormData = MJax.Unserialize(MJax.FormData);
             MJax.Render();
-            for(var strId in MJax.Controls){
-                MJax.Controls[strId].Attach();
+            for(var strId in  MJax.FormData.body){
+                MJax.FormData.body[strId].Attach();
             }
         },
         Render:function(){
             MJax.LoadTemplate();
-            var objRenderData = MJax.FormData.body;
+            var objRenderData = {};
+            for(var strKey in MJax.FormData.body){
+                objRenderData[strKey] = MJax.FormData.body[strKey];
+            }
             objRenderData['_head'] = MJax.FormData.head;
             var strBody = window.Mustache.render(
                 MJax.FormData.head.template_html,
@@ -125,9 +128,9 @@
             return objReturn;
         },
         Unserialize:function(mixData){
-
+            MJax.Log(typeof(mixData));
             if(typeof mixData == 'object'){
-                if(typeof(mixData._mclass != 'undefined')){
+                if(typeof(mixData._mclass) != 'undefined'){
                     MJax.Log("Unserializing: " + mixData._mclass);
                     var funCtl = MJax.ControlDefinitions[mixData._mclass];
                     if(typeof(funCtl) != 'undefined'){
@@ -135,11 +138,10 @@
                     }else{
                         MJax.Log("Missing Javascript MClass Definition: "+ mixData._mclass);
                     }
-
                 }else{
                     var objReturn = {};
-                    for(var strId in mixData){
-                        objReturn[strId] = MJax.Unserialize(mixData[strId]);
+                    for(var strKey in mixData){
+                        objReturn[strKey] = MJax.Unserialize(mixData[strKey]);
                     }
                 }
             }else{

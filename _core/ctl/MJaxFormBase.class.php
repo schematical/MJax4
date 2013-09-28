@@ -49,7 +49,7 @@ class MJaxFormBase extends MLCObjectBase{
         return $strToReturn;
     }
     public static function Run($strFormClass){
-        if(array_key_exists('action', $_POST)){
+        if(array_key_exists('head', $_POST)){
             $objForm = _munserialzie($_POST);
             _dv($objForm);
         }else{
