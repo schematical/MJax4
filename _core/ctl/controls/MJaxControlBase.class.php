@@ -287,6 +287,13 @@ abstract class MJaxControlBase{
         $arrData['Template'] = $this->strTemplate;
         $arrData['Modified'] = $this->blnModified;
         $arrData['Type'] = get_class($this);
+        $arrData['Events'] = array();
+        foreach($this->arrEvents as $strKey => $arrEvents){
+            $arrData['Events'][$strKey] = array();
+            foreach($arrEvents as $intIndex => $objEvent){
+                $arrData['Events'][$strKey][$intIndex] = $objEvent->__toArray();
+            }
+        }
         if(file_exists($this->strTemplate)){
             $arrData['TemplateHtml'] = file_get_contents($this->strTemplate);
         }

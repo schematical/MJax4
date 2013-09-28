@@ -1,1 +1,1 @@
-<input id='{{ControlId}}' type='text' value='{{Value}}' />
+<input id='{{ControlId}}' type='text' value='{{Text}}' />

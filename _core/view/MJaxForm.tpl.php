@@ -8,17 +8,12 @@
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
     <!--   <script src="http://local.ffs.com/assets/MJaxTouch2/js/lib/jquery-mobile/jquery.js"></script>
        <script src="http://local.ffs.com/assets/MJaxTouch2/js/lib/jquery-mobile/jquery.mobile-1.3.2.min.js"></script>-->
-    <script data-main="<?php echo __MJAX_CORE_ASSET_URL__; ?>/js/MJax.js" src='<?php echo __MJAX_CORE_ASSET_URL__; ?>/lib/require.js/require.js' type="text/javascript"></script>
+
     <script type="text/javascript">
-        require(['<?php echo __MJAX_CORE_ASSET_URL__; ?>/lib/require.js/domReady.js'], function (domReady) {
-            domReady(function () {
-                MJax.Init(
-                    //Figure out what page you are on
-                    <?php echo json_encode($this->arrData); ?>
-                );
-            });
-        });
+                //Figure out what page you are on
+                var MJax_Data = <?php echo json_encode($this->arrData); ?>;
     </script>
+    <script data-main="<?php echo __MJAX_CORE_ASSET_URL__; ?>/js/MJax.js" src='<?php echo __MJAX_CORE_ASSET_URL__; ?>/lib/require.js/require.js' type="text/javascript"></script>
 
 </head>
 <body>

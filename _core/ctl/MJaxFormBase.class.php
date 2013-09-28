@@ -19,9 +19,7 @@ class MJaxFormBase {
             case "FormId": return $this->strFormId;
             case "ActiveEvent": return $this->objActiveEvent;
             case "Controls" : return $this->arrControls;
-            case "AsssetMode": return $this->strAssetMode;
-
-
+            case "AssetMode": return $this->strAssetMode;
             default:
                 throw new MLCMissingPropertyException($this,$strName);
 
@@ -51,11 +49,14 @@ class MJaxFormBase {
         return $strToReturn;
     }
     public static function Run($strFormClass){
+        if(array_key_exists('action', $_POST)){
 
-        $objForm = new $strFormClass();
-        $objForm->Form_Create();
+        }else{
+            $objForm = new $strFormClass();
+            $objForm->Form_Create();
 
-        $objForm->Render();
+            $objForm->Render();
+        }
 
 
     }
@@ -123,6 +124,10 @@ class MJaxFormBase {
             'jquery' => __MJAX_CORE_ASSET_URL__ . '/lib/jquery/jquery',
             'mustache' => __MJAX_CORE_ASSET_URL__ . '/lib/mustache/mustache',
             'require_text' => __MJAX_CORE_ASSET_URL__ . '/lib/require.js/text',
+
+
+            //TODO: Move ... somewhere
+            'MJaxAjaxConn' => __MJAX_CORE_ASSET_URL__ . '/js/conn/MJaxAjaxConn',
 
 
             //TODO: Move MJaxTouch2 dependencies else where:

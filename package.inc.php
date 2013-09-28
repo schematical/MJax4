@@ -13,8 +13,14 @@ MLCApplicationBase::$arrClassFiles['MJaxForm'] = __MJAX_CORE_CTL__ . '/MJaxForm.
 MLCApplicationBase::$arrClassFiles['MJaxControlBase'] = __MJAX_CORE_CTL__ . '/controls/MJaxControlBase.class.php';
 MLCApplicationBase::$arrClassFiles['MJaxControl'] = __MJAX_CORE_CTL__ . '/controls/MJaxControl.class.php';
 MLCApplicationBase::$arrClassFiles['MJaxTextBox'] = __MJAX_CORE_CTL__ . '/controls/MJaxTextBox.class.php';
+MLCApplicationBase::$arrClassFiles['MJaxLinkButton'] = __MJAX_CORE_CTL__ . '/controls/MJaxLinkButton.class.php';
 
 require_once(__MJAX_CORE_CTL__ . '/_enum.inc.php');
+
+require_once(__MJAX_CORE_MODEL__ . '/_actions.php');
+require_once(__MJAX_CORE_MODEL__ . '/_events.php');
+require_once(__MJAX_CORE_MODEL__ . '/_exceptions.inc.php');
+require_once(__MJAX_CORE_MODEL__ . '/_functions.inc.php');
 
 
 

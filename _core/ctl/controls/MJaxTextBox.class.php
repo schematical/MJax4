@@ -11,29 +11,7 @@ class MJaxTextBox extends MJaxControl{
         parent::__construct($objParentControl,$strControlId, $arrAttrs);
         $this->strTextMode = MJaxTextMode::SingleLine;
     }
-    public function Render($blnPrint = true){
-        $strRendered = parent::Render();
-        switch($this->strTextMode){
-            case(MJaxTextMode::MultiLine):
-                $strRendered .= sprintf("<textarea id='%s' name='%s' %s>%s</textarea>", $this->strControlId, $this->strName, $this->GetAttrString(), $this->strText);
-            break;
-			default:
-				$strRendered .= sprintf(
-					"<input id='%s' name='%s' type='%s' value='%s' %s></input>",
-					$this->strControlId, 
-					$this->strName, 
-					$this->strTextMode, 
-					$this->strText,  
-					$this->GetAttrString()
-				);
-            	break;
-        }
-        if($blnPrint){
-            echo($strRendered);
-        }else{
-            return $strRendered;
-        }
-    }
+
     public function ParsePostData() {
 			// Check to see if this Control's Value was passed in via the POST data
 			if (array_key_exists($this->strControlId, $_POST)) {
@@ -139,6 +117,11 @@ class MJaxTextBox extends MJaxControl{
     }
     public function GetValue(){
         return $this->strText;
+    }
+    public function __toArray(){
+        $arrData = parent::__toArray();
+        $arrData['Href'] = '#';//TODO: Remove tmp hack
+        return $arrData;
     }
     
 }
