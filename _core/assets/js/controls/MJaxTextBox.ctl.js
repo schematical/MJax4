@@ -12,5 +12,5 @@ var MJaxTextBox = function(objData){
     }
     return me;
 }
-MJaxTextBox.prototype.type = 'MJaxTextBox';
+//MJaxTextBox.prototype.type = 'MJaxTextBox';
 MJax.ControlDefinitions['MJaxTextBox'] = MJaxTextBox;

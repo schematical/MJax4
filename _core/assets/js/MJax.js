@@ -96,6 +96,9 @@
             if(mixData instanceof jQuery){
                 return undefined;
             }
+            if(typeof(mixData) == 'undefined'){
+                return undefined;
+            }
             var strJType = typeof(mixData);
             if(strJType == 'object'){
                 if(typeof(mixData['_MSerialize']) != 'undefined'){
@@ -141,7 +144,10 @@
                 }else{
                     var objReturn = {};
                     for(var strKey in mixData){
-                        objReturn[strKey] = MJax.Unserialize(mixData[strKey]);
+                        var mixSubData = MJax.Unserialize(mixData[strKey]);
+                        if(typeof(mixSubData) != 'undefined'){
+                            objReturn[strKey] = mixSubData;
+                        }
                     }
                 }
             }else{

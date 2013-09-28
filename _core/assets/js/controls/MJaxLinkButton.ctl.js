@@ -5,5 +5,5 @@ var MJaxLinkButton = function(objData){
 
     return me;
 }
-MJaxLinkButton.prototype.type = 'MJaxLinkButton';
+//MJaxLinkButton.prototype.type = 'MJaxLinkButton';
 MJax.ControlDefinitions['MJaxLinkButton'] = MJaxLinkButton;

@@ -1,11 +1,11 @@
 /*define( function () {*/
 var MJaxControlBase = function(objData){
-    this.Data = objData;
+    //this.Data = objData;
     this.jEle = null;
 
 
-    for(var strKey in this.Data){
-        this[strKey] = this.Data[strKey];
+    for(var strKey in objData){
+        this[strKey] = objData[strKey];
     }
     for(var strKey in this.Events){
         for(var intIndex in this.Events[strKey]){
@@ -20,7 +20,6 @@ var MJaxControlBase = function(objData){
     }
     return this;
 }
-MJaxControlBase.prototype.type = 'MJaxControlBase';
 MJaxControlBase.prototype.Render = function(strText, strRender){
     if(this.jEle == null){
         //Create a new Ele

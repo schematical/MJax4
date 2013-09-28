@@ -20,6 +20,12 @@ class MJaxFormBase extends MLCObjectBase{
             case "ActiveEvent": return $this->objActiveEvent;
             case "Controls" : return $this->arrControls;
             case "AssetMode": return $this->strAssetMode;
+            case "head":
+            case "Head":
+                return $this->arrData['head'];
+            case "body":
+            case "Body":
+                return $this->arrData['body'];
             default:
                 throw new MLCMissingPropertyException($this,$strName);
 
@@ -32,7 +38,12 @@ class MJaxFormBase extends MLCObjectBase{
     /////////////////////////
     public function __set($strName, $mixValue) {
         switch ($strName) {
-
+            case "head":
+            case "Head":
+                return $this->arrData['head'] = $mixValue;
+            case "body":
+            case "Body":
+                return $this->arrData['body'] = $mixValue;
             default:
                 throw new MLCMissingPropertyException($this,$strName);
 
@@ -51,7 +62,15 @@ class MJaxFormBase extends MLCObjectBase{
     public static function Run($strFormClass){
         if(array_key_exists('head', $_POST)){
             $objForm = _munserialzie($_POST);
-            _dv($objForm);
+            if(array_key_exists('event', $objForm->head)){
+                $arrEventData = $objForm->head['event'];
+                $objForm->TriggerControlEvent(
+                    $arrEventData['control_id'],
+                    $arrEventData['control_event']
+                );
+            }
+
+
         }else{
             $objForm = new $strFormClass();
             $objForm->Form_Create();
@@ -92,10 +111,13 @@ class MJaxFormBase extends MLCObjectBase{
     /*--------------------------------------------------------------------
     Instance Methods
     */
-    public function __construct(){
-        $this->InitHead();
-
-        $this->arrData['body'] = array();
+    public function __construct($objData = null){
+        if(!is_null($objData)){
+            parent::__MUnserialize($objData);
+        }else{
+            $this->InitHead();
+            $this->arrData['body'] = array();
+        }
     }
     public function RegisterControl($objControl){
         $strControlId = $objControl->ControlId;
@@ -174,5 +196,6 @@ class MJaxFormBase extends MLCObjectBase{
     public function __MUnserialize($arrData){
         $this->arrData = _munserialzie($arrData);
     }
+
 
 }
