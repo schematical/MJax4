@@ -13,7 +13,7 @@ var MJaxControlBase = function(objData){
             $('body').on(
                 objEvent.EventName,
                 '#' + objEvent.ControlId,
-                MJax.Actions[objEvent.Action.Type]
+                MJax.Actions[objEvent.Action._mclass]
             );
             //{"Type":"MJaxClickEvent","Rendered":false,"Once":false,"ControlId":"lnkTest","Selector":"#lnkTest","Action":{"Type":"MJaxServerControlAction","TargetControlId":null,"Function":"lnkTest_click","UseForm":true}}
         }
@@ -39,6 +39,15 @@ MJaxControlBase.prototype.Attach = function(){
 MJaxControlBase.prototype.SetValue = function(mixValue){ }
 MJaxControlBase.prototype.GetValue = function(){
     return null;
+}
+MJaxControlBase.prototype.Update = function(objControl){
+    if(objControl.Modified){
+        //Re render?
+        this.SetValue(objControl.Value);
+    }
+}
+MJaxControlBase.prototype.MSerialize_before = function(){
+    this.Value = this.GetValue();
 }
 MJaxControlBase.prototype.TriggerEvent = function(objEvent){ }
 

@@ -84,7 +84,9 @@
             );
         },
         Update:function(objJson){
-
+            for(var strControlId in objJson.body){
+                MJax.FormData.body[strControlId].Update(objJson.body[strControlId]);
+            }
         },
         Error:function(objJson){
 
@@ -99,6 +101,9 @@
             if(typeof(mixData) == 'undefined'){
                 return undefined;
             }
+            if(typeof(mixData.MSerialize_before) != 'undefined'){
+                mixData.MSerialize_before();
+            }
             var strJType = typeof(mixData);
             if(strJType == 'object'){
                 if(typeof(mixData['_MSerialize']) != 'undefined'){
@@ -106,6 +111,7 @@
                 }
                 var objReturn = {};
                 for(var strKey in mixData){
+
                     var mixChildData  = MJax.Serialize(mixData[strKey]);
                     if(typeof(mixChildData) != 'undefined'){
                         objReturn[strKey] = mixChildData;
@@ -134,8 +140,11 @@
             MJax.Log(typeof(mixData));
             if(typeof mixData == 'object'){
                 if(typeof(mixData._mclass) != 'undefined'){
-                    MJax.Log("Unserializing: " + mixData._mclass);
-                    var funCtl = MJax.ControlDefinitions[mixData._mclass];
+                    if(typeof(mixData._m_clientside_class) != 'undefined'){
+                        var funCtl = MJax.ControlDefinitions[mixData._m_clientside_class];
+                    }else{
+                        var funCtl = MJax.ControlDefinitions[mixData._mclass];
+                    }
                     if(typeof(funCtl) != 'undefined'){
                         var objReturn = new funCtl(mixData);
                     }else{

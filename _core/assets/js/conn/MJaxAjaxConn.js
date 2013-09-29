@@ -18,10 +18,10 @@ MJaxAjaxConn.prototype.TriggerEvent = function(objData){
     );
 
 }
-MJaxAjaxConn.prototype.Success = function(objXhr, objJson){
+MJaxAjaxConn.prototype.Success = function(objJson, strStatus, objXhr){
     MJax.Update(objJson);
 }
-MJaxAjaxConn.prototype.Fail = function(objXhr, objJson){
+MJaxAjaxConn.prototype.Fail = function(objJson, strStatus, objXhr){
     MJax.Error(objJson);
 }
 //Figure out fall back

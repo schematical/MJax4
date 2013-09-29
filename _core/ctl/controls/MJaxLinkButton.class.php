@@ -33,12 +33,7 @@ class MJaxLinkButton extends MJaxControl{
                 
         }
     }
-    public function SetValue($mixValue){
-        return false;
-    }
-    public function GetValue(){
-        return null;
-    }
+
     public function __MSerialize(){
         $arrData = parent::__MSerialize();
         return $arrData;

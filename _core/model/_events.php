@@ -3,7 +3,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-class MJaxEventBase{
+class MJaxEventBase extends MLCObjectBase{
     protected $blnRendered = false;
     protected $blnOnce = false;
     protected $objControl = null;
@@ -64,25 +64,37 @@ class MJaxEventBase{
     public function __set($strName, $mixValue) {
         switch ($strName) {
             case "Once":
-                return ($this->blnOnce = QType::Cast($mixValue, QType::Boolean));
+                return ($this->blnOnce = $mixValue);
             case "Rendered":
-                return ($this->blnRendered = QType::Cast($mixValue, QType::Boolean));
+                return ($this->blnRendered = $mixValue);
             case "KeyCode":
                 return ($this->strKeyCode = $mixValue);
+            case "Selector":
+                return ($this->strSelector = $mixValue);
+            case "Action":
+                return ($this->objAction = $mixValue);
+            case "EventName":
+                return ($this->strEventName = $mixValue);
+            case "ControlId":
+                //return ($this->objControl = $mixValue);
+                return;
             default:
-                return parent::__set($strName, $mixValue);
+               throw new MLCMissingPropertyException($this, $strName);
 
         }
     }
-    public function _MSerialize(){
-        $arrData = array();
-        $arrData['Type'] = get_class($this);
+    public function __MUnserialize($arrData){
+        parent::__MUnserialize($arrData);
+
+    }
+    public function __MSerialize(){
+        $arrData = parent::__MSerialize();
         $arrData['Rendered'] =  $this->blnRendered;
         $arrData['Once'] =  $this->blnOnce;
         //$arrData['Control'] =  $this->objControl;
         $arrData['ControlId'] =  $this->objControl->ControlId;
         $arrData['Selector'] =  $this->strSelector;
-        $arrData['Action'] =  $this->objAction->_MSerialize();
+        $arrData['Action'] =  $this->objAction->__MSerialize();
         $arrData['EventName'] = $this->strEventName;
         return $arrData;
     }

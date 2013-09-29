@@ -3,16 +3,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-abstract class MJaxBaseAction{
+abstract class MJaxBaseAction extends MLCObjectBase{
     protected $objEvent = null;
     
     public function SetEvent($objEvent){
         $this->objEvent = $objEvent;
-    }
-    public function _MSerialize(){
-        $arrData = array();
-        $arrData['Type'] = get_class($this);
-        return $arrData;
     }
 
 }
@@ -22,13 +17,18 @@ class MJaxServerControlAction extends MJaxBaseAction{
     protected $strFunction = null;
     protected $blnUseForm = false;
 
-    public function __construct($objTargetControl, $strFunction){
-    	if($objTargetControl instanceof MJaxForm){
-    		$this->blnUseForm = true;
-    	}else{
-        	$this->strTargetControlId = $objTargetControl->ControlId;
-    	}
-        $this->strFunction = $strFunction;
+    public function __construct($objTargetControl, $strFunction = null){
+        if($objTargetControl instanceof MData){
+            $this->__MUnserialize($objTargetControl);
+            //_dv($objTargetControl);
+        }else{
+            if($objTargetControl instanceof MJaxForm){
+                $this->blnUseForm = true;
+            }else{
+                $this->strTargetControlId = $objTargetControl->ControlId;
+            }
+            $this->strFunction = $strFunction;
+        }
     }
 
     public function Exicute($objForm, $strControlId, $strParameter){
@@ -55,20 +55,33 @@ class MJaxServerControlAction extends MJaxBaseAction{
     /////////////////////////
     public function __set($strName, $mixValue) {
         switch ($strName) {
+            case("UseForm"):
+                $this->blnUseForm = $mixValue;
+            case("TargetControlId"):
+                $this->strTargetControlId = $mixValue;
+            case("Function"):
+                $this->strFunction = $mixValue;
             default:
                 return parent::__set($strName, $mixValue);
 
         }
     }
-    public function _MSerialize(){
-        $arrData = parent::_MSerialize();
+    public function __MUnserialize($arrData){
+
+        $this->strTargetControlId = $arrData['TargetControlId'];
+        $this->strFunction = $arrData['Function'];
+        $this->blnUseForm = $arrData['UseForm'];
+        return $arrData;
+    }
+    public function __MSerialize(){
+        $arrData = parent::__MSerialize();
         $arrData['TargetControlId'] = $this->strTargetControlId;
         $arrData['Function'] = $this->strFunction;
         $arrData['UseForm'] = $this->blnUseForm;
         return $arrData;
     }
 }
-class MJaxJavascriptAction extends MJaxBaseAction{
+/*class MJaxJavascriptAction extends MJaxBaseAction{
     protected $strCode = null;
     public function __construct($strCode){
         $this->strCode = $strCode;
@@ -82,15 +95,7 @@ class MJaxJavascriptAction extends MJaxBaseAction{
         return $strRendered;
     }
     public function Exicute(){}
-}
-class MJaxPluginAction extends MJaxJavascriptAction{
-    
-    public function __construct($objPlugin){
-        $strRendered = $objPlugin->Render(false);
-        //$strCommand = substr($strRendered, 0, strlen($strRendered) - 1);
-        $strCommand = sprintf("function(){%s}", $strRendered);
-        parent::__construct($strCommand);
-    }
-}
+}*/
+
 
 ?>

@@ -8,7 +8,9 @@
  */
 
 class MJaxFormBase extends MLCObjectBase{
-    protected $arrData = array();
+    protected $strFormId = null;
+    protected $objActiveEvent = null;
+    protected $arrHeaderData = array();
     protected $arrControls = array();
     protected $intNextControlId = 1;
     /////////////////////////
@@ -22,10 +24,10 @@ class MJaxFormBase extends MLCObjectBase{
             case "AssetMode": return $this->strAssetMode;
             case "head":
             case "Head":
-                return $this->arrData['head'];
+                return $this->arrHeaderData;
             case "body":
             case "Body":
-                return $this->arrData['body'];
+                return $this->arrControls;
             default:
                 throw new MLCMissingPropertyException($this,$strName);
 
@@ -38,12 +40,14 @@ class MJaxFormBase extends MLCObjectBase{
     /////////////////////////
     public function __set($strName, $mixValue) {
         switch ($strName) {
+            case "ActiveEvent":
+                return $this->objActiveEvent = $mixValue;
             case "head":
             case "Head":
-                return $this->arrData['head'] = $mixValue;
+                return $this->arrHeaderData = $mixValue;
             case "body":
             case "Body":
-                return $this->arrData['body'] = $mixValue;
+                return $this->arrControls = $mixValue;
             default:
                 throw new MLCMissingPropertyException($this,$strName);
 
@@ -62,17 +66,19 @@ class MJaxFormBase extends MLCObjectBase{
     public static function Run($strFormClass){
         if(array_key_exists('head', $_POST)){
             $objForm = _munserialzie($_POST);
+
             if(array_key_exists('event', $objForm->head)){
                 $arrEventData = $objForm->head['event'];
                 $objForm->TriggerControlEvent(
                     $arrEventData['control_id'],
-                    $arrEventData['control_event']
+                    $arrEventData['event']
                 );
             }
-
+            $objForm->RenderJson();
 
         }else{
             $objForm = new $strFormClass();
+            $objForm->strFormId = $strFormClass;
             $objForm->Form_Create();
 
             $objForm->Render();
@@ -113,10 +119,9 @@ class MJaxFormBase extends MLCObjectBase{
     */
     public function __construct($objData = null){
         if(!is_null($objData)){
-            parent::__MUnserialize($objData);
+            $this->__MUnserialize($objData);
         }else{
             $this->InitHead();
-            $this->arrData['body'] = array();
         }
     }
     public function RegisterControl($objControl){
@@ -139,10 +144,10 @@ class MJaxFormBase extends MLCObjectBase{
         unset($this->arrControls[$strControlId]);
     }
     public function InitHead(){
-        $this->arrData['head'] = array();
-        $this->arrData['head']['template'] = __ASSETS_URL__ . '/tpl/' . get_class($this) . '.tpl.html';
-        $this->arrData['head']['require'] = array();
-        $this->arrData['head']['require']['baseUrl'] = __MJAX_CORE_ASSET_URL__;
+        $this->arrHeaderData = array();
+        $this->arrHeaderData['template'] = __ASSETS_URL__ . '/tpl/' . get_class($this) . '.tpl.html';
+        $this->arrHeaderData['require'] = array();
+        $this->arrHeaderData['require']['baseUrl'] = __MJAX_CORE_ASSET_URL__;
         $arrRequirePaths = array(
             'jquery' => __MJAX_CORE_ASSET_URL__ . '/lib/jquery/jquery',
             'mustache' => __MJAX_CORE_ASSET_URL__ . '/lib/mustache/mustache',
@@ -160,12 +165,12 @@ class MJaxFormBase extends MLCObjectBase{
         $arrControlScripts = self::ListAssetDir(
             __MJAX_CORE_ASSETS__ .'/js/controls'
         );
-        $this->arrData['head']['controls'] = array_keys($arrControlScripts);
-        $this->arrData['head']['controls_tpls'] = array();
-        foreach($this->arrData['head']['controls'] as $strControl){
+        $this->arrHeaderData['controls'] = array_keys($arrControlScripts);
+        $this->arrHeaderData['controls_tpls'] = array();
+        foreach($this->arrHeaderData['controls'] as $strControl){
             $strTemplate = __MJAX_CORE_ASSETS__ . '/tpl/controls/' . $strControl .'.tpl.php';
             if(file_exists($strTemplate)){
-                $this->arrData['head']['controls_tpls'][$strControl] = file_get_contents($strTemplate);
+                $this->arrHeaderData['controls_tpls'][$strControl] = file_get_contents($strTemplate);
             }
         }
 
@@ -174,10 +179,10 @@ class MJaxFormBase extends MLCObjectBase{
             $arrControlScripts
 
         );
-        $this->arrData['head']['require']['paths'] = $arrRequirePaths;
+        $this->arrHeaderData['require']['paths'] = $arrRequirePaths;
 
-        $this->arrData['head']['template_loc'] = __ASSETS_ACTIVE_APP_DIR__ . '/tpl/' . get_class($this) . '.tpl.html';
-        $this->arrData['head']['template_html'] = file_get_contents($this->arrData['head']['template_loc']);
+        $this->arrHeaderData['template_loc'] = __ASSETS_ACTIVE_APP_DIR__ . '/tpl/' . get_class($this) . '.tpl.html';
+        $this->arrHeaderData['template_html'] = file_get_contents($this->arrHeaderData['template_loc']);
     }
     public function Render(){
 
@@ -186,15 +191,32 @@ class MJaxFormBase extends MLCObjectBase{
         //If this is html do something here
         require_once(__MJAX_CORE_VIEW__ . '/MJaxForm.tpl.php');
     }
+    public function RenderJson(){
+        echo json_encode(_mserialzie($this));
+    }
+    public function TriggerControlEvent($strControlId, $strEvent){
+        if(!array_key_exists($strControlId, $this->arrControls)){
+            throw new Exception("Control '" . $strControlId . "' does not exist");
+        }
+        $this->arrControls[$strControlId]->__call('TriggerEvent',array($strEvent));
+
+    }
     public function __MSerialize(){
         $arrData = parent::__MSerialize();
-        $this->arrData['_mclass'] = 'MJaxForm';
-        $this->arrData['body'] = $this->arrControls;
-        $arrData = array_merge($arrData, _mserialzie($this->arrData));
+        $arrData['_mclass'] = 'index';
+        $arrData['_m_clientside_class'] = 'MJaxForm';
+        $arrData['body'] = $this->arrControls;
+        $arrData['head'] = $this->arrHeaderData;
+        $arrData = array_merge($arrData, _mserialzie($arrData));
         return $arrData;
     }
     public function __MUnserialize($arrData){
-        $this->arrData = _munserialzie($arrData);
+        parent::__MUnserialize($arrData);
+
+
+        foreach($this->arrControls as $objControl){
+            $objControl->SetForm($this);
+        }
     }
 
 

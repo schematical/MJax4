@@ -114,6 +114,7 @@ abstract class MJaxControlBase extends MLCObjectBase{
     }
     public function TriggerEvent($strEvent){
         foreach($this->arrEvents as $arrSubEvents){
+
             foreach($arrSubEvents as $objEvent){
                 if($objEvent->GetEventName() == $strEvent){
                     $objEvent->Exicute();
@@ -173,6 +174,7 @@ abstract class MJaxControlBase extends MLCObjectBase{
             case "ChildControls": return $this->arrChildControls;
             case "Name": return $this->strName;
             case "Events": return $this->arrEvents;
+            case "Value": return $this->GetValue();
             default:
                throw new Exception("No property with name '" . $strName . "'");
         }
@@ -203,6 +205,8 @@ abstract class MJaxControlBase extends MLCObjectBase{
                 
             case "Modified":
                return ($this->blnModified = $mixValue);
+            case "Value":
+                return $this->SetValue($mixValue);
             default:			   
                throw new Exception("No property '" . $strName . "'");
         }
@@ -270,6 +274,7 @@ abstract class MJaxControlBase extends MLCObjectBase{
         $arrData = parent::__MSerialize();
         $arrData['ControlId'] = $this->strControlId;
         $arrData['Text'] = $this->strText;
+        $arrData['Value'] = $this->GetValue();
         $arrData['Name'] = $this->strName;
         $arrData['Template'] = $this->strTemplate;
         $arrData['Modified'] = $this->blnModified;
@@ -278,7 +283,7 @@ abstract class MJaxControlBase extends MLCObjectBase{
         foreach($this->arrEvents as $strKey => $arrEvents){
             $arrData['Events'][$strKey] = array();
             foreach($arrEvents as $intIndex => $objEvent){
-                $arrData['Events'][$strKey][$intIndex] = $objEvent->_MSerialize();
+                $arrData['Events'][$strKey][$intIndex] = $objEvent->__MSerialize();
             }
         }
         if(file_exists($this->strTemplate)){
@@ -289,23 +294,42 @@ abstract class MJaxControlBase extends MLCObjectBase{
         return $arrData;
     }
     public function __MUnserialize($arrData){
+
         $this->strControlId = $arrData['ControlId'];
-        $this->strText = $arrData['Text'];
+        $this->strText = 'Text';
+        $this->SetValue($arrData['Value']);
+
+
         $this->strName = $arrData['Name'];
         $this->strTemplate = $arrData['Template'];
         $this->blnModified = $arrData['Modified'];
 
-        if(array_key_exists('Events', $arrData)){
+        if($arrData->offsetExists('Events')){
+
             foreach($arrData['Events'] as $strKey => $arrEvents){
+                //_dv($arrEvents);
                 $this->arrEvents[$strKey] = array();
                 foreach($arrEvents as $intIndex => $objEvent){
-                    $arrData['Events'][$strKey][$intIndex];
+
+                    $this->arrEvents[$strKey][$intIndex] = _munserialzie($objEvent);
+
                 }
             }
+        }else{
+
         }
+        /*if($this->strControlId == 'lnkTest'){
+            _dv($this->arrEvents);
+        }*/
         /*if(file_exists($this->strTemplate)){
             $arrData['TemplateHtml'] = file_get_contents($this->strTemplate);
         }*/
+    }
+    public function SetValue($mixValue){
+        return false;
+    }
+    public function GetValue(){
+        return null;
     }
 	public static function AddExtension($objExtension){
 		self::$arrExtensions[] = $objExtension;

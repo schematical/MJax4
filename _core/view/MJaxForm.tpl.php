@@ -11,7 +11,7 @@
 
     <script type="text/javascript">
                 //Figure out what page you are on
-                var MJax_Data = <?php echo json_encode(_mserialzie($this)); ?>;
+                var MJax_Data = <?php $this->RenderJson(); ?>;
     </script>
     <script data-main="<?php echo __MJAX_CORE_ASSET_URL__; ?>/js/MJax.js" src='<?php echo __MJAX_CORE_ASSET_URL__; ?>/lib/require.js/require.js' type="text/javascript"></script>
 

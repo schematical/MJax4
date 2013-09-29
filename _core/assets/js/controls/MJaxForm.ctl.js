@@ -6,6 +6,7 @@ var MJaxForm = function(objData){
     me.head = MJax.Unserialize(objData.head);
     delete(me.jEle);
 
+    me.MSerialize_before = function(){ };
 
     return me;
 }
