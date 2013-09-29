@@ -158,8 +158,7 @@ class MJaxFormBase extends MLCObjectBase{
             'MJaxAjaxConn' => __MJAX_CORE_ASSET_URL__ . '/js/conn/MJaxAjaxConn',
 
 
-            //TODO: Move MJaxTouch2 dependencies else where:
-            'jquery_mobile' => __MJAX_TOUCH_2_CORE_ASSET_URL__ . '/lib/jquery-mobile/jquery.mobile-1.3.2.min'
+
 
         );
         $arrControlScripts = self::ListAssetDir(

@@ -45,8 +45,8 @@
                 MJax.FormData.head.require
             );
             requirejs(
-                ['jquery','jquery_mobile', 'mustache','MJaxAjaxConn'],//, 'require_text'],
-                function($, jMobile, Mustache) {
+                ['jquery', 'mustache','MJaxAjaxConn'],//, 'require_text'],
+                function($,  Mustache) {
                     window.Mustache = Mustache;
                     MJax.Connections['ajax'] = new MJaxAjaxConn();
                     MJax.InitControlDefinitions();
@@ -63,25 +63,15 @@
         },
         Run:function(){
             MJax.FormData = MJax.Unserialize(MJax.FormData);
-            MJax.Render();
+            MJax.FormData.Render();
+
             for(var strId in  MJax.FormData.body){
                 MJax.FormData.body[strId].Attach();
             }
-        },
-        Render:function(){
-            MJax.LoadTemplate();
-            var objRenderData = {};
-            for(var strKey in MJax.FormData.body){
-                objRenderData[strKey] = MJax.FormData.body[strKey];
-            }
-            objRenderData['_head'] = MJax.FormData.head;
-            var strBody = window.Mustache.render(
-                MJax.FormData.head.template_html,
-                objRenderData
-            );
-            $('body').html(
-                strBody
-            );
+           /* requirejs(['jquery_mobile'],function(jQuery){
+                console.log("Done");
+            });*/
+            //$.mobile.i
         },
         Update:function(objJson){
             for(var strControlId in objJson.body){
@@ -137,7 +127,7 @@
             return objReturn;
         },
         Unserialize:function(mixData){
-            MJax.Log(typeof(mixData));
+
             if(typeof mixData == 'object'){
                 if(typeof(mixData._mclass) != 'undefined'){
                     if(typeof(mixData._m_clientside_class) != 'undefined'){
