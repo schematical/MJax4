@@ -18,11 +18,13 @@ var MJaxForm = function(objData){
             MJax.FormData.head.template_html,
             objRenderData
         );
-        $('body').html(
-            strBody
-        );
+        return strBody;
     }
-
+    me.AttachControls = function(){
+        for(var strId in  this.body){
+            this.body[strId].Attach();
+        }
+    }
     return me;
 }
 

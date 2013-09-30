@@ -27,29 +27,29 @@
             MJax.FormData = objFormData;
 
             MJax.InitRequire();
-
-
-            //MJax.Run();
-
         },
         LoadTemplate:function(){
             /*require(
-                ['text!' + MJax.FormData.head.template],
-                function(html) {
-                    MJax.FormData.head.template_html = html;
-                }
-            );*/
+             ['text!' + MJax.FormData.head.template],
+             function(html) {
+             MJax.FormData.head.template_html = html;
+             }
+             );*/
         },
         InitRequire:function(){
             require.config(
                 MJax.FormData.head.require
             );
             requirejs(
-                ['jquery', 'mustache','MJaxAjaxConn'],//, 'require_text'],
+                ['jquery', 'mustache','MJaxAjaxConn'],
                 function($,  Mustache) {
                     window.Mustache = Mustache;
                     MJax.Connections['ajax'] = new MJaxAjaxConn();
-                    MJax.InitControlDefinitions();
+                    requirejs(MJax.FormData.head.require_modules, function(){
+
+
+                        MJax.InitControlDefinitions();
+                    });
                 }
             );
         },
@@ -62,16 +62,16 @@
             );
         },
         Run:function(){
+            $(document).trigger('mjax-run-start');
             MJax.FormData = MJax.Unserialize(MJax.FormData);
-            MJax.FormData.Render();
+            MJax.Render();
+            MJax.FormData.AttachControls();
+        },
+        Render:function(){
+            $('body').html(
+                MJax.FormData.Render()
+            );
 
-            for(var strId in  MJax.FormData.body){
-                MJax.FormData.body[strId].Attach();
-            }
-           /* requirejs(['jquery_mobile'],function(jQuery){
-                console.log("Done");
-            });*/
-            //$.mobile.i
         },
         Update:function(objJson){
             for(var strControlId in objJson.body){
@@ -117,9 +117,9 @@
                     }
                 }
             }else if(
-                //Put types to ignore here
+            //Put types to ignore here
                 (strJType == 'function')
-            ){
+                ){
                 //Do nothing
             }else{
                 var objReturn = mixData;
@@ -138,7 +138,7 @@
                     if(typeof(funCtl) != 'undefined'){
                         var objReturn = new funCtl(mixData);
                     }else{
-                        MJax.Log("Missing Javascript MClass Definition: "+ mixData._mclass);
+                        MJax.Log("Missing Javascript MClass Definition: "+ mixData._mclass + ' or ' + mixData._m_clientside_class);
                     }
                 }else{
                     var objReturn = {};

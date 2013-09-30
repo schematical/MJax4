@@ -24,22 +24,22 @@ MJaxControlBase.prototype.Render = function(strText, strRender){
     if(typeof(this.Pre_Render) != 'undefined'){
         this.Pre_Render(strRender);
     }
-    if(this.jEle == null){
+    //if(this.jEle == null){
 
         //Create a new Ele
         var strHtml = window.Mustache.render(MJax.FormData.head.controls_tpls[this._mclass], this);
 
         return strHtml;
-    }else{
+    /*}else{
         //update existing ele
-    }
+    }*/
 }
 MJaxControlBase.prototype.Attach = function(){
-    if(this.jEle == null){
+    //if(this.jEle == null){
         this.jEle = $('#'+ this.ControlId);
         this.jEle.data('mjax-control', this);
 
-    }
+    //}
 }
 MJaxControlBase.prototype.SetValue = function(mixValue){ }
 MJaxControlBase.prototype.GetValue = function(){

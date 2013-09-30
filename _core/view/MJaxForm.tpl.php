@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>How to use RequireJS with jQuery</title>
-    <!--<script src='http://local.ffs.com/assets/MJaxTouch2/js/MJax.js' type="text/javascript"></script>
--->
+    <title>MJax</title>
+
     <link rel="stylesheet"  href="http://local.ffs.com/assets/MJaxTouch2/lib/jquery-mobile/jquery.mobile-1.3.2.css">
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
-    <!--   <script src="http://local.ffs.com/assets/MJaxTouch2/js/lib/jquery-mobile/jquery.js"></script>
-       <script src="http://local.ffs.com/assets/MJaxTouch2/js/lib/jquery-mobile/jquery.mobile-1.3.2.min.js"></script>-->
+    <!--link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700"-->
 
     <script type="text/javascript">
                 //Figure out what page you are on

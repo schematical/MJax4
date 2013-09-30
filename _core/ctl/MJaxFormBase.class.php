@@ -179,7 +179,7 @@ class MJaxFormBase extends MLCObjectBase{
 
         );
         $this->arrHeaderData['require']['paths'] = $arrRequirePaths;
-
+        //$this->arrHeaderData['require_modules'] = array('jquery', 'mustache','MJaxAjaxConn');
         $this->arrHeaderData['template_loc'] = __ASSETS_ACTIVE_APP_DIR__ . '/tpl/' . get_class($this) . '.tpl.html';
         $this->arrHeaderData['template_html'] = file_get_contents($this->arrHeaderData['template_loc']);
     }
