@@ -286,6 +286,7 @@ abstract class MJaxControlBase extends MLCObjectBase{
                 $arrData['Events'][$strKey][$intIndex] = $objEvent->__MSerialize();
             }
         }
+        $arrData['Children'] = _mserialzie($this->arrChildControls);
         if(file_exists($this->strTemplate)){
             $arrData['TemplateHtml'] = file_get_contents($this->strTemplate);
         }

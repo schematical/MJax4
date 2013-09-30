@@ -3,7 +3,7 @@
     <ul data-role="listview">
         {{#RenderData}}
             <li>
-                <a href="#" data-key='{{name}}'>
+                <a href="#" data-key='{{name}}' data-transition='slide'>
                    {{name}} - {{text}}
                 </a>
             </li>

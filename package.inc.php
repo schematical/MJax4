@@ -15,6 +15,7 @@ $_MLC_CLASSES['MJaxControl'] = __MJAX_CORE_CTL__ . '/controls/MJaxControl.class.
 $_MLC_CLASSES['MJaxTextBox'] = __MJAX_CORE_CTL__ . '/controls/MJaxTextBox.class.php';
 $_MLC_CLASSES['MJaxLinkButton'] = __MJAX_CORE_CTL__ . '/controls/MJaxLinkButton.class.php';
 $_MLC_CLASSES['MJaxJsonExplorer'] = __MJAX_CORE_CTL__ . '/controls/MJaxJsonExplorer.class.php';
+$_MLC_CLASSES['MJaxListview'] = __MJAX_CORE_CTL__ . '/controls/MJaxListview.class.php';
 
 
 

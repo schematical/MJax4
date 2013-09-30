@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>MJax</title>
 
-    <link rel="stylesheet"  href="http://local.ffs.com/assets/MJaxTouch2/lib/jquery-mobile/jquery.mobile-1.3.2.css">
+    <link rel="stylesheet"  href="/assets/MJaxTouch2/lib/jquery-mobile/jquery.mobile-1.3.2.css">
     <!--link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700"-->
 
     <script type="text/javascript">

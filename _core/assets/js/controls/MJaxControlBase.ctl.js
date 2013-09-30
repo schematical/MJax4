@@ -7,6 +7,10 @@ var MJaxControlBase = function(objData){
     for(var strKey in objData){
         this[strKey] = objData[strKey];
     }
+
+    for(var strControlId in this.Children){
+        this.Children[strControlId] = MJax.Unserialize(this.Children[strControlId]);
+    }
     for(var strKey in this.Events){
         for(var intIndex in this.Events[strKey]){
             var objEvent = this.Events[strKey][intIndex];
@@ -37,6 +41,9 @@ MJaxControlBase.prototype.Render = function(strText, strRender){
 MJaxControlBase.prototype.Attach = function(){
     this.jEle = $('#'+ this.ControlId);
     this.jEle.data('mjax-control', this);
+    for(var strControlId in this.Children){
+        this.Children[strControlId].Attach();
+    }
 }
 MJaxControlBase.prototype.SetValue = function(mixValue){ }
 MJaxControlBase.prototype.GetValue = function(){

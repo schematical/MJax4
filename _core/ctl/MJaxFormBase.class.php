@@ -13,6 +13,7 @@ class MJaxFormBase extends MLCObjectBase{
     protected $arrHeaderData = array();
     protected $arrControls = array();
     protected $intNextControlId = 1;
+    protected $arrAssetDirs = array();
     /////////////////////////
     // Public Properties: GET
     /////////////////////////
@@ -86,10 +87,16 @@ class MJaxFormBase extends MLCObjectBase{
 
 
     }
+
     public static function ListAssetDir($strDir, $strPackage = 'MJax4'){
         $arrReturn = array();
-
-        $strUrl = MLCApplication::GetAssetUrl('', $strPackage) .  str_replace(MLCApplication::FindPackageDir($strPackage) . '/_core/assets', '', $strDir);
+        $strPackageDir = MLCApplication::FindPackageDir($strPackage);
+        if(is_null($strPackageDir)){
+            //Assume it is an app
+            $strUrl = MLCApplication::GetAssetUrl('', $strPackage) .  str_replace(__APP_DIR__ . '/' . $strPackage . '/assets', '', $strDir);
+        }else{
+            $strUrl = MLCApplication::GetAssetUrl('', $strPackage) .  str_replace($strPackageDir . '/_core/assets', '', $strDir);
+        }
 
         if ($handle = opendir($strDir)) {
 
@@ -121,8 +128,15 @@ class MJaxFormBase extends MLCObjectBase{
         if(!is_null($objData)){
             $this->__MUnserialize($objData);
         }else{
+            $this->AddAssetDir('MJax4', __MJAX_CORE_ASSETS__);
             $this->InitHead();
+
+            $this->PreLoadControlTemplates();
         }
+
+    }
+    public function AddAssetDir($strPackage, $strDir){
+        $this->arrAssetDirs[$strPackage] = $strDir;
     }
     public function RegisterControl($objControl){
         $strControlId = $objControl->ControlId;
@@ -156,36 +170,50 @@ class MJaxFormBase extends MLCObjectBase{
 
             //TODO: Move ... somewhere
             'MJaxAjaxConn' => __MJAX_CORE_ASSET_URL__ . '/js/conn/MJaxAjaxConn',
-
-
-
-
         );
-        $arrControlScripts = self::ListAssetDir(
-            __MJAX_CORE_ASSETS__ .'/js/controls'
-        );
-        $this->arrHeaderData['controls'] = array_keys($arrControlScripts);
-        $this->arrHeaderData['controls_tpls'] = array();
-        foreach($this->arrHeaderData['controls'] as $strControl){
-            $strTemplate = __MJAX_CORE_ASSETS__ . '/tpl/controls/' . $strControl .'.tpl.php';
-            if(file_exists($strTemplate)){
-                $this->arrHeaderData['controls_tpls'][$strControl] = file_get_contents($strTemplate);
-            }
+        $this->arrHeaderData['controls'] = array();
+        foreach($this->arrAssetDirs as $strPackage => $strDir){
+            $arrControlScripts = self::ListAssetDir(
+                $strDir .'/js/controls',
+                $strPackage
+            );
+            $this->arrHeaderData['controls'] = array_merge(
+                $this->arrHeaderData['controls'],
+                array_keys($arrControlScripts)
+            );
+
+            $arrRequirePaths = array_merge(
+                $arrRequirePaths,
+                $arrControlScripts
+
+            );
         }
-
-        $arrRequirePaths = array_merge(
-            $arrRequirePaths,
-            $arrControlScripts
-
-        );
         $this->arrHeaderData['require']['paths'] = $arrRequirePaths;
         //$this->arrHeaderData['require_modules'] = array('jquery', 'mustache','MJaxAjaxConn');
         $this->arrHeaderData['template_loc'] = __ASSETS_ACTIVE_APP_DIR__ . '/tpl/' . get_class($this) . '.tpl.html';
         $this->arrHeaderData['template_html'] = file_get_contents($this->arrHeaderData['template_loc']);
     }
+    public function PreLoadControlTemplates(){
+        $this->arrHeaderData['controls_tpls'] = array();
+        $arrPackageNames = array_keys($this->arrAssetDirs);
+        foreach($this->arrHeaderData['controls'] as $strControl){
+            $intIndex = count($this->arrAssetDirs);
+            while(
+                (!array_key_exists($strControl, $this->arrHeaderData['controls_tpls'])) &&
+                ($intIndex > 0)
+            ){
+                $strTemplate = $this->arrAssetDirs[$arrPackageNames[$intIndex - 1]] . '/tpl/controls/' . $strControl .'.tpl.php';
+                error_log("Trying: " . $strTemplate);
+                if(file_exists($strTemplate)){
+                    $this->arrHeaderData['controls_tpls'][$strControl] = file_get_contents($strTemplate);
+                }
+
+                $intIndex -= 1;
+            }
+        }
+
+    }
     public function Render(){
-
-
 
         //If this is html do something here
         require_once(__MJAX_CORE_VIEW__ . '/MJaxForm.tpl.php');
@@ -204,8 +232,14 @@ class MJaxFormBase extends MLCObjectBase{
         $arrData = parent::__MSerialize();
         $arrData['_mclass'] = 'index';
         $arrData['_m_clientside_class'] = 'MJaxForm';
-        $arrData['body'] = $this->arrControls;
+        $arrData['body'] = array();
+        foreach($this->arrControls as $strControlId => $objControl){
+            if(is_null($objControl->ParentControl)){
+                $arrData['body'][$strControlId] = $objControl;
+            }
+        }
         $arrData['head'] = $this->arrHeaderData;
+
         $arrData = array_merge($arrData, _mserialzie($arrData));
         return $arrData;
     }
