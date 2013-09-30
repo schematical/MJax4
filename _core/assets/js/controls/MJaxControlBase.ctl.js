@@ -35,11 +35,8 @@ MJaxControlBase.prototype.Render = function(strText, strRender){
     }*/
 }
 MJaxControlBase.prototype.Attach = function(){
-    //if(this.jEle == null){
-        this.jEle = $('#'+ this.ControlId);
-        this.jEle.data('mjax-control', this);
-
-    //}
+    this.jEle = $('#'+ this.ControlId);
+    this.jEle.data('mjax-control', this);
 }
 MJaxControlBase.prototype.SetValue = function(mixValue){ }
 MJaxControlBase.prototype.GetValue = function(){
